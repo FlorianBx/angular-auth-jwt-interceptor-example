@@ -6,10 +6,15 @@ import { AdminComponent } from './pages/admin/admin.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'home', pathMatch: 'full' },
-  { path: 'home', component: HomeComponent },
+  { path: '', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-  { path: 'admin', component: AdminComponent },
+  { path: 'admin', component: AdminComponent,
+    children: [
+      { path: '', redirectTo: 'chart', pathMatch: 'full' },
+      { path: 'chart', component: LoginComponent },
+      { path: 'users', component: RegisterComponent },
+    ]
+  },
   { path: '**', component: NotFoundComponent },
 ];
