@@ -4,6 +4,7 @@ import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { AdminComponent } from './pages/admin/admin.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
+import { UserGrowthChartComponent } from './features/user-growth-chart/user-growth-chart.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -12,7 +13,7 @@ export const routes: Routes = [
   { path: 'admin', component: AdminComponent,
     children: [
       { path: '', redirectTo: 'chart', pathMatch: 'full' },
-      { path: 'chart', component: LoginComponent },
+      { path: 'chart', component: UserGrowthChartComponent },
       { path: 'users', component: RegisterComponent },
     ]
   },
