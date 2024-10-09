@@ -1,0 +1,17 @@
+meta {
+  name: Get all users
+  type: http
+  seq: 3
+}
+
+get {
+  url: http://localhost:3000/api/auth/users
+  body: none
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  ~Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzI4MjM4MzE1LCJleHAiOjE3MjgyMzgzNzV9.WKEYX76iqmohzcPwH62O-OGzLuHxJKPrnq6tcG-r_Kc
+  set-cookie	accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzI4MjM3MTgwLCJleHAiOjE3MjgyMzcyNDB9.1mlCeUjVZfmxw5Mi2Ew6vQMELV_2yQaYAFUJPE4v32s
+}
