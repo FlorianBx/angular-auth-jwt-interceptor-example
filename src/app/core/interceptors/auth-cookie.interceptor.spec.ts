@@ -1,11 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpInterceptorFn } from '@angular/common/http';
 
-import { authCookieInterceptorInterceptor } from './auth-cookie-interceptor.interceptor';
+import { authCookieInterceptor} from './auth-cookie.interceptor';
 
 describe('authCookieInterceptorInterceptor', () => {
-  const interceptor: HttpInterceptorFn = (req, next) => 
-    TestBed.runInInjectionContext(() => authCookieInterceptorInterceptor(req, next));
+  const interceptor: HttpInterceptorFn = (req, next) =>
+    TestBed.runInInjectionContext(() => authCookieInterceptor(req, next));
 
   beforeEach(() => {
     TestBed.configureTestingModule({});

@@ -7,17 +7,25 @@
       <a routerLink="/" routerLinkActive="text-indigo-400 border-b-2 border-indigo-400"
         [routerLinkActiveOptions]="{ exact: true }">Home</a>
     </li>
+    @if(authService.isAuthenticated()) {
+      <li class="flex items-center hover:text-indigo-400 py-1">
+        <button (click)="logout()" class="border-b-2 border-indigo-400">Logout</button>
+      </li>
+    } @else {
+      <li class="flex items-center hover:text-indigo-400 py-1">
+        <a routerLink="/login" routerLinkActive="text-indigo-400 border-b-2 border-indigo-400">Login</a>
+      </li>
+      <li class="flex items-center hover:text-indigo-400 py-1">
+        <a routerLink="/register" routerLinkActive="text-indigo-400 border-b-2 border-indigo-400">Register</a>
+      </li>
+    }
     <li class="flex items-center hover:text-indigo-400 py-1">
-      <a routerLink="/login" routerLinkActive="text-indigo-400 border-b-2 border-indigo-400">Login</a>
-    </li>
-    <li class="flex items-center hover:text-indigo-400 py-1">
-      <a routerLink="/register" routerLinkActive="text-indigo-400 border-b-2 border-indigo-400">Register</a>
-    </li>
-    <li class="flex items-center hover:text-indigo-400 py-1">
-      <a routerLink="/admin" routerLinkActive="text-indigo-400 border-b-2 border-indigo-400" [routerLinkActiveOptions]="{ exact: false }">Admin</a>
+      <a routerLink="/admin" routerLinkActive="text-indigo-400 border-b-2 border-indigo-400"
+        [routerLinkActiveOptions]="{ exact: false }">Admin</a>
     </li>
   </ul>
-  <ul class="fixed bottom-0 left-0 right-0 flex justify-around bg-gray-900/80 backdrop-blur items-center gap-9 w-full lg:hidden">
+  <ul
+    class="fixed bottom-0 left-0 right-0 flex justify-around bg-gray-900/80 backdrop-blur items-center gap-9 w-full lg:hidden">
     <li class="flex items-center hover:text-indigo-400 py-6">
       <a routerLink="/home" routerLinkActive="text-indigo-400 border-b-2 border-indigo-400"
         [routerLinkActiveOptions]="{ exact: true }">home</a>

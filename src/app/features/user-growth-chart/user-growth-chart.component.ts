@@ -42,7 +42,7 @@ export class UserGrowthChartComponent implements AfterViewInit {
               label: 'Number of users',
               data: [65, 59, 80, 81, 56, 55, 40, 34, 120, 121, 100, 139],
               fill: false,
-              borderColor: 'rgb(75, 192, 192)',
+              borderColor: 'rgb(129, 140, 247)',
               tension: 0.1,
             },
           ],
@@ -51,17 +51,17 @@ export class UserGrowthChartComponent implements AfterViewInit {
           responsive: true,
           plugins: {
             title: {
-              display: true,
+              display: false,
               align: 'start',
               text: 'Number of users',
-              color: 'rgb(75, 192, 192)',
+              color: 'rgb(229, 240, 247)',
               font: {
                 size: 20,
               },
             },
             legend: {
               labels: {
-                color: 'rgb(75, 192, 192)',
+                color: 'rgb(129, 140, 247)',
               },
             },
           },
