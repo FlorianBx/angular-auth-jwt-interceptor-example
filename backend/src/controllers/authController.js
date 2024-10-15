@@ -7,6 +7,11 @@ import {
   UnauthorizedError,
 } from "../middlewares/errorMiddleware.js";
 
+const ACCESS_TOKEN_EXPIRY = '15m';
+const REFRESH_TOKEN_EXPIRY = '7d';
+const ACCESS_TOKEN_COOKIE_MAX_AGE = 15 * 60 * 1000; // 15 minutes
+const REFRESH_TOKEN_COOKIE_MAX_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days
+
 const prisma = new PrismaClient();
 
 export const register = async (req, res, next) => {
@@ -108,6 +113,7 @@ export const login = async (req, res, next) => {
 export const logout = async (req, res) => {
   try {
     const userId = req.user.userId;
+    console.log(userId)
 
     await prisma.user.update({
       where: { id: userId },
@@ -144,13 +150,13 @@ export const refreshAccessToken = async (req, res) => {
       user.id,
       user.role,
       JWT_SECRET,
-      "15m",
+      ACCESS_TOKEN_EXPIRY
     );
     const newRefreshToken = authService.generateToken(
       user.id,
       user.role,
       JWT_REFRESH_SECRET,
-      "7d",
+      REFRESH_TOKEN_EXPIRY,
     );
 
     await prisma.user.update({
@@ -162,14 +168,14 @@ export const refreshAccessToken = async (req, res) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
-      maxAge: 15 * 60 * 1000, // 15 minutes
+      maxAge: ACCESS_TOKEN_COOKIE_MAX_AGE, // 15 minutes
     });
 
     res.cookie("refreshToken", newRefreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      maxAge: REFRESH_TOKEN_COOKIE_MAX_AGE, // 7 days
     });
 
     res.json({ message: "Tokens refreshed successfully" });
