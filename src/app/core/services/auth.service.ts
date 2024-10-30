@@ -1,11 +1,26 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { firstValueFrom } from 'rxjs';
+import { Router } from '@angular/router';
+import { Observable, tap, map, catchError, of } from 'rxjs';
 
 interface AuthResponse {
-  auth: boolean;
+  user: {
+    id: string;
+    email: string;
+    role: string;
+    createdAt: string;
+    updatedAt: string;
+  };
   message?: string;
+}
+
+interface CheckAuthResponse {
+  auth: boolean;
+}
+
+interface Credentials {
+  email: string;
+  password: string;
 }
 
 @Injectable({
@@ -13,53 +28,84 @@ interface AuthResponse {
 })
 export class AuthService {
   private http = inject(HttpClient);
+  private router = inject(Router);
   private isAuthenticatedSignal = signal<boolean>(false);
-  isAuthenticated = computed(() => this.isAuthenticatedSignal());
 
-  async checkAuthentication(): Promise<boolean> {
-    try {
-      const response = await firstValueFrom(
-        this.http.get<AuthResponse>('http://localhost:3000/api/auth/isAuthenticated', { withCredentials: true })
+  isAuthenticated = this.isAuthenticatedSignal.asReadonly();
+
+
+  signIn(credential: Credentials): Observable<AuthResponse> {
+    return this.http
+      .post<AuthResponse>('http://localhost:3000/api/auth/login', credential, {
+        withCredentials: true,
+      })
+      .pipe(
+        tap((response) => {
+          if (!!response.user.id) {
+            console.log(response.user.id);
+            this.isAuthenticatedSignal.set(!!response.user.id);
+            this.router.navigate(['/']);
+          }
+        }),
       );
-      this.isAuthenticatedSignal.set(response.auth);
-      return response.auth;
-    } catch (error) {
-      console.error('Error checking authentication:', error);
-      this.isAuthenticatedSignal.set(false);
-      return false;
-    }
   }
 
-  signIn(credential: { email: string; password: string }): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>('http://localhost:3000/api/auth/login', credential, { withCredentials: true })
-  }
-
-  // async signIn(credential: { email: string; password: string }): Promise<AuthResponse> {
-  //   try {
-  //     const response = await firstValueFrom(
-  //       this.http.post<AuthResponse>('http://localhost:3000/api/auth/login', credential, { withCredentials: true })
-  //     );
-  //     this.isAuthenticatedSignal.set(response.auth);
-  //     return response;
-  //   } catch (error) {
-  //     console.error('Sign in failed:', error);
-  //     this.isAuthenticatedSignal.set(false);
-  //     return { auth: false, message: 'Sign in failed' };
-  //   }
-  // }
-
-  async signOut(): Promise<void> {
-    try {
-      await firstValueFrom(
-        this.http.post<void>('http://localhost:3000/api/auth/logout', {}, { withCredentials: true })
+  signUp(credential: Credentials): Observable<AuthResponse> {
+    return this.http
+      .post<AuthResponse>(
+        'http://localhost:3000/api/auth/register',
+        credential,
+        {
+          withCredentials: true,
+        },
+      )
+      .pipe(
+        tap((response) => {
+          if (!!response.user.id) {
+            this.isAuthenticatedSignal.set(!!response.user.id);
+            this.router.navigate(['/']);
+          }
+        }),
       );
-      this.isAuthenticatedSignal.set(false);
-    } catch (error) {
-      console.error('Logout failed:', error);
-    }
   }
 
-  async getInitialAuthState(): Promise<boolean> {
-    return this.checkAuthentication();
+  signOut(): void {
+    this.http
+      .post(
+        'http://localhost:3000/api/auth/logout',
+        {},
+        { withCredentials: true },
+      )
+      .subscribe({
+        next: () => {
+          this.isAuthenticatedSignal.set(false),
+          this.router.navigate(['/']);
+        },
+        error: (err) => {
+          console.error('Error while signing out:', err),
+          this.isAuthenticatedSignal.set(false);
+          this.router.navigate(['/']);
+        },
+      });
+  }
+
+  checkAuthentication(): Observable<boolean> {
+    return this.http.get<CheckAuthResponse>(
+        'http://localhost:3000/api/auth/isAuthenticated', { withCredentials: true },
+      ).pipe(
+        tap({
+          next: (response) => this.isAuthenticatedSignal.set(response.auth),
+          error: () => this.isAuthenticatedSignal.set(false)
+        }),
+        map((response) => response.auth),
+        catchError((error) => {
+          console.error('Check authentication error', error);
+          return of(false);
+        }),
+      )
+  }
+
+  initializeAuth(): void {
+    this.checkAuthentication().subscribe();
   }
 }

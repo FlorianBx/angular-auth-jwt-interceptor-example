@@ -14,6 +14,10 @@ const REFRESH_TOKEN_COOKIE_MAX_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 const prisma = new PrismaClient();
 
+export const coucou = async (req, res) => {
+   res.status(200).json({ message: 'coucou' })
+}
+
 export const register = async (req, res, next) => {
   try {
     const { email, password, role } = req.body;

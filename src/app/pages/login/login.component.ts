@@ -27,7 +27,7 @@ export class LoginComponent {
         console.error(error);
       },
     });
-    console.log(this.loginService.isAuthenticated());
+    console.log('status login: ' + this.loginService.isAuthenticated());
 
     this.loginForm.reset();
   }

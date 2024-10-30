@@ -14,7 +14,7 @@ export class NavbarComponent implements OnInit {
   authService = inject(AuthService);
 
   ngOnInit() {
-    this.authService.checkAuthentication();
+    this.authService.initializeAuth();
   }
 
   logout() {

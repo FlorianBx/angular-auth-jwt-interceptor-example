@@ -1,24 +1,25 @@
-import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { Router } from '@angular/router';
-import { catchError, throwError } from 'rxjs';
+import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
+import { catchError, throwError, switchMap } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 
 export const authCookieInterceptor: HttpInterceptorFn = (req, next) => {
-  const router = inject(Router);
   const authService = inject(AuthService);
 
-  const authReq = req.clone({
-    withCredentials: true,
-  });
-
-  return next(authReq).pipe(
+return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
       if (error.status === 401) {
-        // authService.signOut();
-        // router.navigate(['/login']);
+        return authService.checkAuthentication().pipe(
+          switchMap(() => {
+            return next(req);
+          }),
+          catchError((refreshError) => {
+            authService.signOut();
+            return throwError(() => refreshError);
+          })
+        );
       }
       return throwError(() => error);
-    }),
+    })
   );
 };

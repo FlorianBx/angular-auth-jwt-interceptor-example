@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './features/navbar/navbar.component';
+import { AuthService } from './core/services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -11,4 +12,9 @@ import { NavbarComponent } from './features/navbar/navbar.component';
 })
 export class AppComponent {
   title = 'authent-angular-with-backend-jwt-';
+  private authService = inject(AuthService)
+
+  ngOnInit() {
+    this.authService.initializeAuth();
+  }
 }
